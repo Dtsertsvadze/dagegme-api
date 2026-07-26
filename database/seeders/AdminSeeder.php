@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Admin;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class AdminSeeder extends Seeder
 {
@@ -12,11 +13,13 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $username = env('ADMIN_USERNAME');
-        $password = env('ADMIN_PASSWORD');
+        $username = config('admin.username');
+        $password = config('admin.password');
 
         if (! $username || ! $password) {
-            return;
+            throw new RuntimeException(
+                'ADMIN_USERNAME and ADMIN_PASSWORD must be configured before seeding the admin.'
+            );
         }
 
         Admin::query()->updateOrCreate(
