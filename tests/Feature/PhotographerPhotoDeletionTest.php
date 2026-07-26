@@ -15,7 +15,8 @@ class PhotographerPhotoDeletionTest extends TestCase
 
     public function test_admin_can_delete_one_photographer_photo(): void
     {
-        Storage::fake('public');
+        config(['media.disk' => 'media']);
+        Storage::fake('media');
 
         Sanctum::actingAs(Admin::query()->create([
             'username' => 'admin',
@@ -30,8 +31,8 @@ class PhotographerPhotoDeletionTest extends TestCase
             'photo_path' => 'photographers/photos/keep-me.jpg',
         ]);
 
-        Storage::disk('public')->put($deletedPhoto->photo_path, 'photo');
-        Storage::disk('public')->put($remainingPhoto->photo_path, 'photo');
+        Storage::disk('media')->put($deletedPhoto->photo_path, 'photo');
+        Storage::disk('media')->put($remainingPhoto->photo_path, 'photo');
 
         $this->deleteJson(
             "/api/admin/photographers/{$photographer->id}/photos/{$deletedPhoto->id}"
@@ -45,8 +46,8 @@ class PhotographerPhotoDeletionTest extends TestCase
         $this->assertDatabaseHas('photographer_photos', [
             'id' => $remainingPhoto->id,
         ]);
-        Storage::disk('public')->assertMissing($deletedPhoto->photo_path);
-        Storage::disk('public')->assertExists($remainingPhoto->photo_path);
+        Storage::disk('media')->assertMissing($deletedPhoto->photo_path);
+        Storage::disk('media')->assertExists($remainingPhoto->photo_path);
     }
 
     public function test_photo_must_belong_to_the_photographer_in_the_url(): void

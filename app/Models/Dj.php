@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasProfilePhotoUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Dj extends Model
 {
-    use HasFactory;
+    use HasFactory, HasProfilePhotoUrl;
 
     /**
      * @var list<string>

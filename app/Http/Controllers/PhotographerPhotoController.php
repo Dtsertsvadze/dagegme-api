@@ -22,7 +22,7 @@ class PhotographerPhotoController extends Controller
             str_starts_with($photoPath, 'photographers/photos/')
             && ! PhotographerPhoto::query()->where('photo_path', $photoPath)->exists()
         ) {
-            Storage::disk('public')->delete($photoPath);
+            Storage::disk((string) config('media.disk'))->delete($photoPath);
         }
 
         return response()->json([

@@ -14,10 +14,13 @@ trait HandlesMediaUploads
     ): ?string {
         if ($request->hasFile($field)) {
             $request->validate([
-                $field => ['image'],
+                $field => ['image', 'max:10240'],
             ]);
 
-            return $request->file($field)->store($directory, 'public');
+            return $request->file($field)->store(
+                $directory,
+                (string) config('media.disk')
+            );
         }
 
         $value = $request->input($field);
@@ -40,11 +43,14 @@ trait HandlesMediaUploads
         if ($request->hasFile($field)) {
             $request->validate([
                 $field => ['array'],
-                $field . '.*' => ['image'],
+                $field.'.*' => ['image', 'max:10240'],
             ]);
 
             return collect($request->file($field))
-                ->map(fn ($file): string => $file->store($directory, 'public'))
+                ->map(fn ($file): string => $file->store(
+                    $directory,
+                    (string) config('media.disk')
+                ))
                 ->all();
         }
 
