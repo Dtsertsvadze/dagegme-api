@@ -8,6 +8,7 @@ use App\Http\Controllers\PhotographerController;
 use App\Http\Controllers\PhotographerPhotoController;
 use App\Http\Controllers\PresenterController;
 use App\Http\Controllers\RentalCarController;
+use App\Http\Controllers\RentalCarPhotoController;
 use App\Http\Controllers\VideographerController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,5 +41,9 @@ Route::prefix('admin')->group(function (): void {
         Route::apiResource('rental-cars', RentalCarController::class)
             ->parameters(['rental-cars' => 'rentalCar'])
             ->only(['store', 'update', 'destroy']);
+        Route::delete(
+            '/rental-cars/{rentalCar}/photos/{photo}',
+            [RentalCarPhotoController::class, 'destroy']
+        )->scopeBindings();
     });
 });

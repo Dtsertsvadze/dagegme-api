@@ -14,12 +14,14 @@ class RentalCarController extends Controller
     public function index(): JsonResponse
     {
         return response()->json(
-            RentalCar::query()->latest()->get()
+            RentalCar::query()->with('photos')->latest()->get()
         );
     }
 
     public function show(RentalCar $rentalCar): JsonResponse
     {
+        $rentalCar->load('photos');
+
         return response()->json($rentalCar);
     }
 
@@ -32,6 +34,7 @@ class RentalCarController extends Controller
             'city' => ['required', 'array:en,ka'],
             'city.en' => ['required', 'string', 'max:255'],
             'city.ka' => ['required', 'string', 'max:255'],
+            'photos' => ['nullable'],
         ]);
 
         $data['profile_photo'] = $this->resolveSingleMediaPath(
@@ -42,7 +45,21 @@ class RentalCarController extends Controller
 
         $rentalCar = RentalCar::query()->create($data);
 
-        return response()->json($rentalCar, 201);
+        $photoPaths = $this->resolveMultipleMediaPaths(
+            $request,
+            'photos',
+            'rental-cars/photos'
+        );
+
+        if ($photoPaths !== []) {
+            $rentalCar->photos()->createMany(
+                collect($photoPaths)
+                    ->map(fn (string $path): array => ['photo_path' => $path])
+                    ->all()
+            );
+        }
+
+        return response()->json($rentalCar->load('photos'), 201);
     }
 
     public function update(Request $request, RentalCar $rentalCar): JsonResponse
@@ -54,6 +71,8 @@ class RentalCarController extends Controller
             'city' => ['sometimes', 'required', 'array:en,ka'],
             'city.en' => ['required_with:city', 'string', 'max:255'],
             'city.ka' => ['required_with:city', 'string', 'max:255'],
+            'photos' => ['nullable'],
+            'replace_photos' => ['nullable', 'boolean'],
         ]);
 
         $data['profile_photo'] = $this->resolveSingleMediaPath(
@@ -63,9 +82,30 @@ class RentalCarController extends Controller
             $rentalCar->profile_photo
         );
 
+        $replacePhotos = (bool) ($data['replace_photos'] ?? false);
+        unset($data['replace_photos']);
+
         $rentalCar->update($data);
 
-        return response()->json($rentalCar);
+        $photoPaths = $this->resolveMultipleMediaPaths(
+            $request,
+            'photos',
+            'rental-cars/photos'
+        );
+
+        if ($replacePhotos) {
+            $rentalCar->photos()->delete();
+        }
+
+        if ($photoPaths !== []) {
+            $rentalCar->photos()->createMany(
+                collect($photoPaths)
+                    ->map(fn (string $path): array => ['photo_path' => $path])
+                    ->all()
+            );
+        }
+
+        return response()->json($rentalCar->load('photos'));
     }
 
     public function destroy(RentalCar $rentalCar): JsonResponse

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasProfilePhotoUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RentalCar extends Model
 {
@@ -29,5 +30,10 @@ class RentalCar extends Model
         return [
             'city' => 'array',
         ];
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(RentalCarPhoto::class);
     }
 }
