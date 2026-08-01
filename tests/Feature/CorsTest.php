@@ -30,6 +30,18 @@ class CorsTest extends TestCase
             ->assertHeader('Access-Control-Allow-Origin', 'https://admin.dagegme.com');
     }
 
+    public function test_local_frontend_origin_is_allowed(): void
+    {
+        $response = $this->withHeaders([
+            'Origin' => 'http://localhost:5173',
+            'Access-Control-Request-Method' => 'GET',
+        ])->options('/api/rental-cars');
+
+        $response
+            ->assertNoContent()
+            ->assertHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    }
+
     public function test_unknown_origin_is_not_allowed(): void
     {
         $response = $this->withHeaders([
