@@ -14,7 +14,7 @@ trait HandlesMediaUploads
     ): ?string {
         if ($request->hasFile($field)) {
             $request->validate([
-                $field => ['image', 'max:10240'],
+                $field => ['image'],
             ]);
 
             return $request->file($field)->store(
@@ -43,7 +43,7 @@ trait HandlesMediaUploads
         if ($request->hasFile($field)) {
             $request->validate([
                 $field => ['array'],
-                $field.'.*' => ['image', 'max:10240'],
+                $field.'.*' => ['image'],
             ]);
 
             return collect($request->file($field))

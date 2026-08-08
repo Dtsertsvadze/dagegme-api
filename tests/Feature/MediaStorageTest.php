@@ -50,4 +50,31 @@ class MediaStorageTest extends TestCase
             $response->json('photos.0.photo_path')
         );
     }
+
+    public function test_media_uploads_have_no_laravel_file_size_cap(): void
+    {
+        config(['media.disk' => 'media']);
+        Storage::fake('media');
+
+        Sanctum::actingAs(Admin::query()->create([
+            'username' => 'admin',
+            'password' => 'secret123',
+        ]));
+
+        $response = $this->post('/api/admin/photographers', [
+            'name' => ['en' => 'Photographer', 'ka' => 'ფოტოგრაფი'],
+            'description' => ['en' => 'Description', 'ka' => 'აღწერა'],
+            'city' => ['en' => 'Tbilisi', 'ka' => 'თბილისი'],
+            'profile_photo' => UploadedFile::fake()
+                ->image('large-profile.jpg')
+                ->size(11 * 1024),
+            'photos' => [
+                UploadedFile::fake()
+                    ->image('large-gallery.jpg')
+                    ->size(11 * 1024),
+            ],
+        ]);
+
+        $response->assertCreated();
+    }
 }
