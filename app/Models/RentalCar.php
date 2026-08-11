@@ -18,6 +18,7 @@ class RentalCar extends Model
         'model',
         'mark',
         'year',
+        'description',
         'profile_photo',
         'city',
     ];
@@ -28,6 +29,7 @@ class RentalCar extends Model
     protected function casts(): array
     {
         return [
+            'description' => 'array',
             'city' => 'array',
         ];
     }

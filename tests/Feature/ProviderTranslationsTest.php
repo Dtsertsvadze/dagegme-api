@@ -44,4 +44,63 @@ class ProviderTranslationsTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors('name.ka');
     }
+
+    public function test_djs_and_rental_cars_accept_and_return_translated_descriptions(): void
+    {
+        Sanctum::actingAs(Admin::query()->create([
+            'username' => 'admin',
+            'password' => 'secret123',
+        ]));
+
+        $description = [
+            'en' => 'Available for weddings',
+            'ka' => 'ხელმისაწვდომია ქორწილებისთვის',
+        ];
+
+        $this->postJson('/api/admin/djs', [
+            'name' => ['en' => 'DJ Alex', 'ka' => 'დიჯეი ალექსი'],
+            'description' => $description,
+            'city' => ['en' => 'Tbilisi', 'ka' => 'თბილისი'],
+        ])
+            ->assertCreated()
+            ->assertJsonPath('description.en', $description['en'])
+            ->assertJsonPath('description.ka', $description['ka']);
+
+        $this->postJson('/api/admin/rental-cars', [
+            'model' => 'E-Class',
+            'mark' => 'Mercedes-Benz',
+            'year' => 2024,
+            'description' => $description,
+            'city' => ['en' => 'Tbilisi', 'ka' => 'თბილისი'],
+        ])
+            ->assertCreated()
+            ->assertJsonPath('description.en', $description['en'])
+            ->assertJsonPath('description.ka', $description['ka']);
+    }
+
+    public function test_dj_and_rental_car_descriptions_require_both_languages(): void
+    {
+        Sanctum::actingAs(Admin::query()->create([
+            'username' => 'admin',
+            'password' => 'secret123',
+        ]));
+
+        $this->postJson('/api/admin/djs', [
+            'name' => ['en' => 'DJ Alex', 'ka' => 'დიჯეი ალექსი'],
+            'description' => ['en' => 'Available for weddings'],
+            'city' => ['en' => 'Tbilisi', 'ka' => 'თბილისი'],
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('description.ka');
+
+        $this->postJson('/api/admin/rental-cars', [
+            'model' => 'E-Class',
+            'mark' => 'Mercedes-Benz',
+            'year' => 2024,
+            'description' => ['ka' => 'ხელმისაწვდომია ქორწილებისთვის'],
+            'city' => ['en' => 'Tbilisi', 'ka' => 'თბილისი'],
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('description.en');
+    }
 }

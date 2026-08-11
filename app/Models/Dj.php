@@ -15,6 +15,7 @@ class Dj extends Model
      */
     protected $fillable = [
         'name',
+        'description',
         'profile_photo',
         'city',
         'links',
@@ -27,6 +28,7 @@ class Dj extends Model
     {
         return [
             'name' => 'array',
+            'description' => 'array',
             'city' => 'array',
             'links' => 'array',
         ];
