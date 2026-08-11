@@ -35,6 +35,7 @@ class HallController extends Controller
             'city' => ['required', 'array:en,ka'],
             'city.en' => ['required', 'string', 'max:255'],
             'city.ka' => ['required', 'string', 'max:255'],
+            'vip' => ['nullable', 'boolean'],
         ]);
 
         $data['profile_photo'] = $this->resolveSingleMediaPath(
@@ -60,6 +61,7 @@ class HallController extends Controller
             'city' => ['sometimes', 'required', 'array:en,ka'],
             'city.en' => ['required_with:city', 'string', 'max:255'],
             'city.ka' => ['required_with:city', 'string', 'max:255'],
+            'vip' => ['nullable', 'boolean'],
         ]);
 
         $data['profile_photo'] = $this->resolveSingleMediaPath(

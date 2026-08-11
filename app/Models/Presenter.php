@@ -18,6 +18,7 @@ class Presenter extends Model
         'profile_photo',
         'description',
         'city',
+        'vip',
     ];
 
     /**
@@ -29,6 +30,7 @@ class Presenter extends Model
             'name' => 'array',
             'description' => 'array',
             'city' => 'array',
+            'vip' => 'boolean',
         ];
     }
 }

@@ -35,6 +35,7 @@ class DjController extends Controller
             'city' => ['required', 'array:en,ka'],
             'city.en' => ['required', 'string', 'max:255'],
             'city.ka' => ['required', 'string', 'max:255'],
+            'vip' => ['nullable', 'boolean'],
             'links' => ['nullable', 'array'],
             'links.*' => ['nullable', 'string', 'max:2048'],
         ]);
@@ -62,6 +63,7 @@ class DjController extends Controller
             'city' => ['sometimes', 'required', 'array:en,ka'],
             'city.en' => ['required_with:city', 'string', 'max:255'],
             'city.ka' => ['required_with:city', 'string', 'max:255'],
+            'vip' => ['nullable', 'boolean'],
             'links' => ['nullable', 'array'],
             'links.*' => ['nullable', 'string', 'max:2048'],
         ]);

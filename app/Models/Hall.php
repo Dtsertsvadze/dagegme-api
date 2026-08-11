@@ -18,6 +18,7 @@ class Hall extends Model
         'profile_photo',
         'city',
         'description',
+        'vip',
     ];
 
     /**
@@ -29,6 +30,7 @@ class Hall extends Model
             'name' => 'array',
             'description' => 'array',
             'city' => 'array',
+            'vip' => 'boolean',
         ];
     }
 }

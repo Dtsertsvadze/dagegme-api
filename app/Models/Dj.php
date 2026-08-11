@@ -19,6 +19,7 @@ class Dj extends Model
         'profile_photo',
         'city',
         'links',
+        'vip',
     ];
 
     /**
@@ -31,6 +32,7 @@ class Dj extends Model
             'description' => 'array',
             'city' => 'array',
             'links' => 'array',
+            'vip' => 'boolean',
         ];
     }
 }
